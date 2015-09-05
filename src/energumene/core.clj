@@ -1,45 +1,13 @@
 (ns energumene.core)
 
-(defprotocol Storage
-  (-supports? [_]) ; pagination, filter, sort, batch
-  (-startup  [_ m])
+(defprotocol Store
+  (-startup  [_])
   (-store [_ s])
-  (-query [ s]) ; support sparse fields, filtering, sorting
+  (-query [_ s m]) ; support sparse fields, filtering, sorting
+  (-query-all [_ s m])
   (-update [_ s])
-  ;(-replace [_ t id])
   (-delete [_ s]) ; by type, id
   (-shutdown [_ m]))
-
-; Lucuma: Custom elements
-; Hipo: DOM reconciliation
-; Picada: Higher level Material components (Hipo+Lucuma)
-; Energumene: HTTP based persistent resource server
-; Kalos: Complete UI side (routing, offline, declarative UI) Can reconciliate Kagathos
-; Kagathos: Complete backend (API and HTML, routing)
-
-; Depending on Exporter? (like JSONAPI) Storage might need some specific schema constraints (like id as uuid, ..)
-; on top of standard -supports? features
-
-; https://tools.ietf.org/html/rfc6906
-; http://trac.tools.ietf.org/html/rfc6839#section-3.1
-; application/vnd.api+transit+json
-; https://github.com/cognitect/transit-format
-
-; register a schema definition for a type
-; retrieve previous schema, if any
-; diff both, if changes delegate to upgrade-startegy
-; can downgrade
-
-; schema
-; custom type?
-; restriction on string, map
-
-; JSONAPI
-; resource can be object (i.e. map) or array (i.e. list)
-
-; JDBC
-; support list and map
-
 
 (defn start
   []
@@ -50,18 +18,18 @@
 (defprotocol Evolver
   (-evolve [_])) ; {:entity :field :from :to}
 
-{:entity :user
- :version 1
- :schema {:id :string
-          :email [:string]}}
+(defn revisioned
+  [m]
+  (assoc m :energumene/revision 'str))
 
-{:entity :blog
- :version 1
- :schema {:id :string
-          :owner :user}}
+(defn revisioned?
+  [m]
+  (contains? m :energumene/revision))
 
-; Example from ReactEurope GraphQL
-; GET /post/some-id
-; => {post: {message: ""; timestamp: ...; authorId: 112233}}
-; GET /user/112233
-; => {user: {name: "Julien"; profile:{} }}
+(defn definition-only
+  [m]
+  (reduce-kv #(if (and (keyword? %2) (= "energumene" (namespace %2))) %1 (assoc %1 %2 %3)) {} m))
+
+(defn entities
+  [m]
+  (reduce-kv #(assoc %1 %2 (definition-only %3)) {} (:entities m)))

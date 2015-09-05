@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="Leiningen: pjstadig/humane-test-output:0.7.0">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/pjstadig/humane-test-output/0.7.0/humane-test-output-0.7.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
