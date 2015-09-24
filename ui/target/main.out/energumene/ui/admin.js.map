@@ -1,1 +1,0 @@
-{"version":3,"file":"\/Users\/julien\/.boot\/cache\/tmp\/Users\/julien\/Documents\/energumene\/ui\/139o\/-yc3gxx\/main.out\/energumene\/ui\/admin.js","sources":["admin.cljs"],"lineCount":10,"mappings":";AAAA;;;;;AAKA,AAACA;AACD,AAACC,+BAAaC","names":["picada.bootstrap\/register-all","lucuma.core\/register","energumene.ui.component.browser\/ene-browser"]}

@@ -1,21 +1,19 @@
 (ns energumene.entities
   (:require [energumene.core :as ene]))
 
-; https://github.com/miner/herbert
-
 (def user
-  '{:energumene/expose-reverse-links #{blog}
+  '{:energumene/expose-reverse-links #{:schema/blog}
     :energumene/access {}
     :energumene/jdbc {:options {:name "UNIQUE ID"} :types {:name "VARCHAR(21)"}}
-    :name str
-    :email str
+    "name" str
+    "email?" str
     })
 
 (def blog                                                   ; BLOG
   (ene/revisioned
-    '{:name str
-      :description? str
-      :visibility (or :public :private)                       ; BLOG_VISIBILITY_ENUM for mapping
+    '{"name" str
+      "description?" str
+      "visibility" (or :public :private)                       ; BLOG_VISIBILITY_ENUM for mapping
       ;:owner user                                            ; USER
       ;:authors #{user-ref+}
       }))
@@ -29,8 +27,8 @@
  :cors {:enable-foreign-origins true}
  :entities
  {"user"
-  {:constraints {"user" {:unique #{"name"}}}
-   :jdbc/config {:types {"name" "VARCHAR(64)"}}
+  {:jdbc/config {:types {"name" "VARCHAR(64)"}}
+   :constraints {"user" {:unique #{"name"}}}
    :schema
    {"name" 'str}}
   "blog"

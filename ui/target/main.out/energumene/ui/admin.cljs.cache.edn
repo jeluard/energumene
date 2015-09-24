@@ -1,2 +1,0 @@
-;; Analyzed by ClojureScript 1.7.107
-{:name energumene.ui.admin, :doc nil, :excludes #{}, :use-macros nil, :require-macros {luc lucuma.core, lucuma.core lucuma.core}, :uses nil, :requires {bro energumene.ui.component.browser, energumene.ui.component.browser energumene.ui.component.browser, boot picada.bootstrap, picada.bootstrap picada.bootstrap, luc lucuma.core, lucuma.core lucuma.core}, :imports nil}

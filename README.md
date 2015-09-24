@@ -1,5 +1,5 @@
+# Energumene
 
+** WORK IN PROGRESS **
 
-Vocab:
-Entity (schema)
-Resource (HTTP level)
+Export data specified by an herbert schema via JSON API. Default store implementation is SQL based.

@@ -260,7 +260,9 @@
       (let [entv (core/entities conf)]
         (jdbc/atomic conn
         (doseq [s (create-tables-from-entities entv)]
+          (println s)
           (jdbc/execute conn s)))
+        #_
         (doseq [[kw m] (:entities conf)]
           (doseq [f (filter #(enum? (val %)) (seq m))]
             (let [[k v] f
@@ -285,7 +287,8 @@
           (jdbc/atomic conn
             (into {} (map (fn [[e m]] [e (insert! conn e m)])) m))
         (catch Exception e
-          {:type :error :cause e}))))
+          (.printStackTrace e)
+          {:type :error :cause (.toString e)}))))
   (-delete [_ s]
     (with-open [conn (jdbc/connection db)]
       (jdbc/atomic conn

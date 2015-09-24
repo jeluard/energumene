@@ -1,5 +1,13 @@
 (ns energumene.util.schema)
 
+; https://github.com/miner/herbert
+
+; leonard : energumene flavour of herbert
+; http://www.youtube.com/watch?v=2fy-h6QcfkE
+
+; convert "name?" to (? "name") because herbert does not support "name?" (only :name?)
+; (h/conforms? '{(? "a") int} {})
+
 (defn ref?
   [o]
   (and (keyword? o) (= "schema" (namespace o))))

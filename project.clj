@@ -4,6 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
+                 [com.velisco/herbert "0.6.11"]
                  [cheshire "5.5.0"]
                  [funcool/clojure.jdbc "0.6.0"]]
   :profiles
@@ -11,7 +12,7 @@
    {:source-paths ["src" "src-dev"]
     :resource-paths ["test-resources"]
     :dependencies [[aleph "0.4.0"]
-                   [com.h2database/h2 "1.4.188"]
+                   [com.h2database/h2 "1.4.189"]
                    [org.clojure/test.check "0.7.0" :scope "test"]
                    [criterium "0.4.3" :scope "test"]
                    [ring/ring-mock "0.2.0" :scope "test"]

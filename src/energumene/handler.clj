@@ -71,26 +71,28 @@
 
 (defn create
   [st r s ev]
-  (with-open [rea (clojure.java.io/reader s)]
-    (let [m (che/parse-stream rea)
-          d (get m "data")
-          am (get d "attributes")
-          ; TODO missing relationships
-          ]
+  (if s
+    (with-open [rea (clojure.java.io/reader s)]
+      (let [m (che/parse-stream rea)
+            d (get m "data")
+            am (get d "attributes")
+            ; TODO missing relationships
+            ]
 
-      (assert (not (contains? d "id")) "Client-side generated IDs are disallowed")
-      (cond
-        (not (contains? d "type")) {:status 403 :body ""}
-        (not (entity-exists? (get d "type") ev)) {:status 409 :body ""}
-        ; TODO herbert validation
-        :else
-        (let [o (ene/-store st [(assoc am :type r)])]
-          (if (map? o)
-            {:status 400 :body ""}
-            (che/generate-string
-              (-> m
-                  (assoc-in ["data" "id"] (first o))
-                  (assoc-in ["data" "links"] [{:self ""}])))))))))
+        (assert (not (contains? d "id")) "Client-side generated IDs are disallowed")
+        (cond
+          (not (contains? d "type")) {:status 403 :body "Missing type information"}
+          (not (entity-exists? (get d "type") ev)) {:status 409 :body ""}
+          ; TODO herbert validation
+          :else
+          (let [{:keys [type] :as o} (ene/-store st {r [am]})]
+            (if (= :error type)
+              (ring/error (che/generate-string (dissoc o :type)))
+              (che/generate-string
+                (-> m
+                    (assoc-in ["data" "id"] (first o))
+                    (assoc-in ["data" "links"] [{:self ""}]))))))))
+    {:status 401 :body "Null body"}))
 
 (defn entity-from-resource
   "resource are plural for API but singular in schema"
@@ -105,6 +107,8 @@
   [req t]
   (get-in req [:headers t]))
 
+; TODO accept can be a vector and can have params e.g. Accept: audio/*; q=0.2, audio/basic
+; 415 if accept has some params unless it is charset (and no other one)
 (defn get-method
   [req e ems v st m]
   (if (= jsona/mime-type (header req "accept"))
@@ -185,22 +189,40 @@
   [req v st ev ems]
   (let [f (first v)
         e (entity-from-resource f)]
+    (println "\nreq")
+    (println req)
     (if (entity-exists? e ev)
       (case (:request-method req)
         :get (get-method req e ems v st (parse-query-string (:query-string req)))
         :post (post-method req st e ev)
         :delete (delete-method req st e v)
         :head {:status 200 :body "HEAD, GET, POST, PATCH, DELETE"}
+        :options {:status 200}
         ring/method-not-allowed)
       ring/no-resource-found)))
+
+(defn wrap-cors
+  [req resp]
+  (if-let [s (get-in req [:headers "origin"])]
+    (update resp :headers merge {"Access-Control-Allow-Origin" "*" "Access-Control-Allow-Methods" "GET, POST, DELETE"
+                                 "Access-Control-Allow-Headers" "content-type"
+                                 "Access-Control-Request-Headers" "content-type"
+                                 "Access-Control-Expose-Headers" "content-type"})
+    resp))
 
 (defn handler
   [st m]
   (let [ev (into [] (map name) (keys (:entities m)))]
     (fn [req]
-      (let [v (path (:uri req))]
-        (if (empty? v)
-          (if (= :get (:request-method req))
-            (handle-top-level req ev)
-            ring/method-not-allowed)
-          (handle-resource req v st ev (:entities m)))))))
+      ; TODO validate resp has proper shape / types
+      (wrap-cors
+        req
+        (try
+          (let [v (path (:uri req))]
+            (if (empty? v)
+              (if (= :get (:request-method req))
+                (handle-top-level req ev)
+                ring/method-not-allowed)
+              (handle-resource req v st ev (:entities m))))
+          (catch Exception e
+            {:status 500 :body (.toString e)}))))))

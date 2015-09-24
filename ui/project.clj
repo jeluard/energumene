@@ -7,5 +7,5 @@
                  [org.clojure/clojurescript "1.7.28"]
                  [picada "0.5.0-SNAPSHOT"]
                  [lucuma "0.5.0"]
-                 [happy "0.5.0-SNAPSHOT"]]
+                 [happy "0.5.0"]]
   :min-lein-version "2.5.0")

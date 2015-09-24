@@ -1,6 +1,6 @@
 (set-env!
  :source-paths  #{"src"}
- :resources-paths  #{"resources"}
+ :resource-paths  #{"resources"}
  :dependencies '[[org.clojure/clojure           "1.7.0"]
                  [adzerk/boot-cljs              "1.7.48-3"   :scope "test"]
                  [adzerk/boot-reload            "0.3.2"      :scope "test"]
@@ -11,7 +11,7 @@
                  [org.clojure/clojurescript "1.7.107"]
                  [picada "0.5.0-SNAPSHOT"]
                  ;[lucuma "0.5.0"]
-                 [happy "0.5.0-SNAPSHOT"]])
+                 [happy "0.5.1"]])
 
 (def dev-dependencies '[[cljsjs/document-register-element "0.4.3-0"]
                         [cljsjs/dom4 "1.4.5-0"]
